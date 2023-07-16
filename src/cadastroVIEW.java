@@ -1,8 +1,10 @@
+
+import javax.swing.JOptionPane;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author Adm
@@ -15,6 +17,8 @@ public class cadastroVIEW extends javax.swing.JFrame {
     public cadastroVIEW() {
         initComponents();
     }
+    conectaDAO conexao = new conectaDAO();
+    ProdutosDAO produtosDAO = new ProdutosDAO(conexao);
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -135,26 +139,55 @@ public class cadastroVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cadastroNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastroNomeActionPerformed
-        
-        
+
+
     }//GEN-LAST:event_cadastroNomeActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        ProdutosDTO produto = new ProdutosDTO();
-        String nome = cadastroNome.getText();
-        String valor = cadastroValor.getText();
-        String status = "A Venda";
-        produto.setNome(nome);
-        produto.setValor(Integer.parseInt(valor));
-        produto.setStatus(status);
-        
-        ProdutosDAO produtodao = new ProdutosDAO();
-        produtodao.cadastrarProduto(produto);
-        
+        cadastrar();
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
+    public void cadastrar() {
+
+        int resposta;
+
+        conexao.connectDB();
+
+        ProdutosDTO produto = new ProdutosDTO();
+        String statusVenda = "A Venda";
+
+        produto.setNome(cadastroNome.getText());
+        produto.setValor(Integer.parseInt(cadastroValor.getText()));
+        produto.setStatus(statusVenda);
+
+        boolean status = produtosDAO.cadastrarProduto(produto);
+
+        if (status == false) {
+
+            JOptionPane.showMessageDialog(null, "Erro de conexão com o Banco de Dados",
+                    "Comunicação DB", JOptionPane.ERROR_MESSAGE);
+
+        } else {
+
+            JOptionPane.showMessageDialog(null, "Produto cadastrado com sucesso!",
+                    "Comunicação DB", JOptionPane.INFORMATION_MESSAGE);
+
+            limpardados();
+
+        }
+
+    }
+
+    public void limpardados() {
+
+        cadastroNome.setText("");
+        cadastroValor.setText("");
+
+    }
+
+
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
-        listagemVIEW listagem = new listagemVIEW(); 
+        listagemVIEW listagem = new listagemVIEW();
         listagem.setVisible(true);
     }//GEN-LAST:event_btnProdutosActionPerformed
 
