@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -137,12 +138,52 @@ public class listagemVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-        String id = id_produto_venda.getText();
 
-        ProdutosDAO produtosdao = new ProdutosDAO();
+        int resposta = JOptionPane.showOptionDialog(null,
+                "Deseja prosseguir com a Venda?",
+                "Atenção",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new String[]{"SIM", "NÃO"}, "Não");
+
+        if (resposta == 0) {
+
+            int id = Integer.parseInt(id_produto_venda.getText());
+
+            boolean status = conexao.connectDB();
+
+            if (status == false) {
+
+                JOptionPane.showMessageDialog(null,
+                        "Erro ao conectar com o banco ", "Banco Dados",
+                        JOptionPane.ERROR_MESSAGE);
+
+            } else {
+
+                int retorno = produtosDAO.venderProduto(id);
+
+                if (retorno == 1) {
+
+                    JOptionPane.showMessageDialog(null, "Produto vendido com sucesso!",
+                            "Confirmação", JOptionPane.INFORMATION_MESSAGE);
+
+                }
+                conexao.desconectarDB();
+
+                id_produto_venda.setText("");
+                listarProdutos();
+
+            }
+
+        }
+
+        //String id = id_produto_venda.getText();
+
+        //ProdutosDAO produtosdao = new ProdutosDAO();
 
         //produtosdao.venderProduto(Integer.parseInt(id));
-        listarProdutos();
+        //listarProdutos();
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
