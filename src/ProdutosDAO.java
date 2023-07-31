@@ -10,6 +10,8 @@
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ProdutosDAO {
 
@@ -19,6 +21,7 @@ public class ProdutosDAO {
     public ProdutosDAO(conectaDAO conexao) {
 
         this.conexao = conexao;
+        this.listagem = new ArrayList<>();
     }
 
     public ProdutosDAO() {
@@ -57,7 +60,41 @@ public class ProdutosDAO {
 
     public ArrayList<ProdutosDTO> listarProdutos() {
 
-        return listagem;
+        String sql = "SELECT * FROM produtos";
+
+        try {
+
+            conexao.connectDB();
+            Connection conn = conexao.getConexao();
+
+            PreparedStatement st = conn.prepareStatement(sql);
+            ResultSet rs = st.executeQuery();
+
+            listagem.clear();
+
+            while (rs.next()) {
+
+                ProdutosDTO produto = new ProdutosDTO();
+
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getInt("valor"));
+                produto.setStatus(rs.getString("status"));
+
+                listagem.add(produto);
+            }
+
+            st.close();
+            conexao.desconectarDB();
+            return listagem;
+
+        } catch (SQLException ex) {
+
+            System.out.println("Erro ao pesquisar: " + ex.getMessage());
+
+            return null;
+        }
+
     }
 
 }
